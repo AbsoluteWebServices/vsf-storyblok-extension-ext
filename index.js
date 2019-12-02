@@ -12,8 +12,8 @@ module.exports = ({config, db}) => {
 
   const api = Router()
 
-  function loadStories(params) {
-    return storyblokClient.get('cdn/stories', Object.assign({
+  function loadStories(client, params) {
+    return client.get('cdn/stories', Object.assign({
       per_page: 100,
       resolve_links: 'url'
     }, params))
@@ -37,7 +37,7 @@ module.exports = ({config, db}) => {
       
       storeRouter.get('/stories', async (req, res) => {
         const path = req.params.story + req.params[0]
-        let dataJson = await loadStories(req.query)
+        let dataJson = await loadStories(storyblokClient, req.query)
         apiStatus(res, {
           stories: dataJson.data.stories,
         })
@@ -59,7 +59,7 @@ module.exports = ({config, db}) => {
 
   api.get('/stories', async (req, res) => {
     const path = req.params.story + req.params[0]
-    let response = loadStories(req.query)
+    let response = loadStories(storyblokClient, req.query)
     let dataJson = await response
     apiStatus(res, {
       stories: dataJson.data.stories,
